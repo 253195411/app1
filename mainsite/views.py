@@ -5,6 +5,7 @@ from mainsite.models import User
 from django.template import loader
 from django.contrib.auth import authenticate,login ,logout
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 # Create your views here.
 #定义表单模型
 class UserForm(forms.Form):
@@ -20,7 +21,7 @@ def login_view(request):
             username = uf.cleaned_data['username']
             password = uf.cleaned_data['password']
             user =  authenticate(request,username= username,password= password)
-            if user is not None:
+            if user is not None and user.is_active:
                 login(request, user)
                 return redirect('index')
                 #return HttpResponseRedirect('index')
@@ -28,7 +29,7 @@ def login_view(request):
                 #context={'username':username}
                 #return HttpResponse(template.render(context,request))
             else:
-                return HttpResponseRedirect('')
+                return HttpResponseRedirect('login')
                 #template = loader.get_template('mainsite/login.html')
                 #context = {'uf': uf, }
                 #return HttpResponse(template.render(context, request))
@@ -54,7 +55,7 @@ def login_view01(request):
                 context={'username':username}
                 return HttpResponse(template.render(context,request))
             else:
-                #return HttpResponseRedirect('')
+                #return HttpResponseRedirect('login')
                 template = loader.get_template('mainsite/login.html')
                 context = {'uf': uf, }
                 return HttpResponse(template.render(context, request))
